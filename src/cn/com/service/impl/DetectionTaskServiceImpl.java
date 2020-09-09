@@ -12,6 +12,7 @@ import cn.com.service.DetectionTaskService;
 import cn.com.util.Dom4jUtil;
 import cn.com.util.LogUtil;
 import cn.com.util.ShellUtil;
+import cn.com.util.TestThread;
 import cn.hutool.cache.impl.TimedCache;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.io.FileUtil;
@@ -57,6 +58,9 @@ public class DetectionTaskServiceImpl implements DetectionTaskService {
     private static final int STATE_ERROR = 2;
 
 
+    // 模拟启动的线程
+    private TestThread testThread;
+    
     /**
      * 任务状态 缓存默认5秒
      */
@@ -205,7 +209,7 @@ public class DetectionTaskServiceImpl implements DetectionTaskService {
         
         ConcurrentMap<String, DetectionTask> detectionMap = ConfigManager.getDetectionMap();
         
-        if (detectionMap.get(taskNum).getState() != STATE_RUNNING) {
+        if (STATE_RUNNING != detectionMap.get(taskNum).getState()) {
             try {
             	detectionMap.remove(taskNum);
                 cn.com.util.FileUtil.deleteDirectory(rootPath);
@@ -296,20 +300,42 @@ public class DetectionTaskServiceImpl implements DetectionTaskService {
             return ServiceResp.createByErrorMessage("该任务已无法执行,请先修改后再次执行");
         }
         
+        // 查看任务状态
+        if(STATE_RUNNING ==  ConfigManager.getDetectionMap().get(taskNum).getState()) {
+        	return ServiceResp.createByErrorMessage("任务已经启动，无法再启动");
+        }
+        
+        
         ConfigManager.getDetectionMap().get(taskNum).setLastModifyDate(new Date());
         ConfigManager.getDetectionMap().get(taskNum).setLastDate(new Date());
         ConfigManager.genDetectionTaskXml();
+        if(this.testThread != null) {
+        	this.testThread.interrupt();
+        }
+        this.testThread = new TestThread(taskNum);
+        this.testThread.start();
         LogUtil.logInfo("startTask detection task success", UserSession.get(Const.LOGINNAME), taskNum, null);
         return ServiceResp.createBySuccess("任务启动成功");
     }
 
     @Override
     public ServiceResp<?> stopTask(String taskNum) {
+    	
+    	
+    	
         ServiceResp<?> serviceResp = checkTaskIsOk(taskNum);
         if (!serviceResp.getSuccess()) {
             LogUtil.logInfo("stopTask detection task fail", UserSession.get(Const.LOGINNAME), taskNum, serviceResp);
             return serviceResp;
         }
+        // 查看任务状态
+        if(STATE_RUNNING !=  ConfigManager.getDetectionMap().get(taskNum).getState()) {
+        	return ServiceResp.createByErrorMessage("任务已经停止无需再停止");
+        }
+        
+        if(this.testThread != null) {
+         	this.testThread.interrupt();
+         }
         return ServiceResp.createBySuccess("任务停止成功");
     }
 
@@ -341,9 +367,19 @@ public class DetectionTaskServiceImpl implements DetectionTaskService {
             LogUtil.logInfo("restartTask detection task fail", UserSession.get(Const.LOGINNAME), taskNum, "该任务已无法执行,请先修改后再次执行");
             return ServiceResp.createByErrorMessage("该任务已无法执行,请先修改后再次执行");
         }
+        
+    
+        
         ConfigManager.getDetectionMap().get(taskNum).setLastModifyDate(new Date());
         ConfigManager.getDetectionMap().get(taskNum).setLastDate(new Date());
         ConfigManager.genDetectionTaskXml();
+        
+        if(this.testThread != null) {
+        	this.testThread.interrupt();
+        }
+        this.testThread = new TestThread(taskNum);
+        this.testThread.start();
+        
         LogUtil.logInfo("restartTask detection task success", UserSession.get(Const.LOGINNAME), taskNum, null);
         return ServiceResp.createBySuccess("任务重启成功");
     }

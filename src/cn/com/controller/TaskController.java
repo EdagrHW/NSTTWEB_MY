@@ -82,14 +82,13 @@ public class TaskController {
     }
 
     /**
-     * @description 添加用例初始化配置
+     * @description 添加任务
      * @author wangkai
      * @date 2019/8/20 10:57
      */
-    @RequestMapping("task/add_caseinit")
+    @RequestMapping("task/add_task")
     @ResponseBody
-    public ServiceResp<?> addCaseInitConfig(HttpServletRequest request) {
-        DetectionTask detectionTask = JSONObject.parseObject(request.getParameter("detectionTask"), DetectionTask.class);
+    public ServiceResp<?> addTask(@RequestBody DetectionTask detectionTask) {
         ServiceResp<?> success = detectionTaskService.addDetectionTask(detectionTask);
         if (success.getSuccess()) {
             ConfigManager.getDetectionMap().put(detectionTask.getTaskNum(), detectionTask);

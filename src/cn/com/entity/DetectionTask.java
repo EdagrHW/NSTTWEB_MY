@@ -3,6 +3,7 @@ package cn.com.entity;
 import cn.com.common.Const;
 import cn.com.interceptor.UserSession;
 import cn.com.util.Dom4jUtil;
+import cn.com.util.TestThread;
 import cn.hutool.core.convert.Convert;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;
@@ -57,36 +58,14 @@ public class DetectionTask {
     /**测试状态*/
     private Integer state;
 
-    /**依赖jar*/
-    private List<String> lib;
-
-    /**依赖c库*/
-    private List<String> nativeLib;
-
-    /**厂商c库主库*/
-    private String mainLib;
 
     /**是否有效 配置文件有 检测数据目录也存在 默认 false*/
     private boolean valid;
     /**是否已经是执行完成的 默认 false*/
     private boolean finish;
 
-    /**
-     *
-     */
-    private String productName;
-    /**
-     * 任务配置基本信息
-     */
-    private TaskBasicInfo taskBasicInfo;
-    /**
-     *
-     */
-    private String inspectorId;
-    /**
-     *
-     */
-    private String inspectorName;
+
+    
     /**
      *厂商名称
      */
@@ -129,10 +108,6 @@ public class DetectionTask {
         caselibNode.addText(Convert.toStr(caseLib, StrUtil.EMPTY));
         Element manCompanyNode = Dom4jUtil.addChild(root, "mancompany");
         manCompanyNode.addText(Convert.toStr(manCompany, StrUtil.EMPTY));
-        Element productNameNode = Dom4jUtil.addChild(root, "productname");
-        productNameNode.addText(Convert.toStr(productName, StrUtil.EMPTY));
-        /*Element cpuNode = Dom4jUtil.addChild(root, "cpu");
-        cpuNode.addText(Convert.toStr(productName,StrUtil.EMPTY));*/
     }
     /**
      * @description
@@ -192,31 +167,13 @@ public class DetectionTask {
         if (!"".equals(status)){
             state= Convert.toInt(Integer.parseInt(status),STATE_NOT_RUNNING);
         }
-        String libNode = String.valueOf(map.get("lib"));
-        if (!"".equals(libNode)){
-            if (JSONUtil.isJsonArray(libNode)){
-                lib= JSON.parseObject(libNode,List.class);
-            }else{
-                lib= Arrays.asList(libNode.split(","));
-            }
-        }
-        String nativeNode = String.valueOf(map.get("nativelib"));
-        if (!"".equals(nativeNode)){
-            if (JSONUtil.isJsonArray(nativeNode)){
-                nativeLib= JSON.parseObject(nativeNode,List.class);
-            }else{
-              //  nativeLib=new ArrayList<>();
-                nativeLib= Arrays.asList(libNode.split(","));
-            }
-        }
+       
+       
         String casename = String.valueOf(map.get("casename"));
         if (!"".equals(casename)){
             caseLib = Convert.toStr(casename, StrUtil.EMPTY);
         }
-        String productname = String.valueOf(map.get("productname"));
-        if (!"".equals(productname)){
-            productName= Convert.toStr(productname, StrUtil.EMPTY);
-        }
+
         String mancompany = String.valueOf(map.get("mancompany"));
         if (!"".equals(mancompany)){
             manCompany= Convert.toStr(mancompany, StrUtil.EMPTY);
@@ -319,9 +276,7 @@ public class DetectionTask {
             manCompany= Convert.toStr(manCompanyNode.getText(), StrUtil.EMPTY);
         }
         Node productnameNode = Dom4jUtil.getNodeByXPath("productname",root);
-        if (productnameNode!=null){
-            productName= Convert.toStr(productnameNode.getText(), StrUtil.EMPTY);
-        }
+
 
     }
 
@@ -373,53 +328,9 @@ public class DetectionTask {
         this.state = state;
     }
 
-    public List<String> getLib() {
-        return lib;
-    }
+   
 
-    public void setLib(List<String> lib) {
-        this.lib = lib;
-    }
-
-    public List<String> getNativeLib() {
-        return nativeLib;
-    }
-
-    public void setNativeLib(List<String> nativeLib) {
-        this.nativeLib = nativeLib;
-    }
-
-    public String getMainLib() {
-        return mainLib;
-    }
-
-    public void setMainLib(String mainLib) {
-        this.mainLib = mainLib;
-    }
-
-    public TaskBasicInfo getTaskBasicInfo() {
-        return taskBasicInfo;
-    }
-
-    public void setTaskBasicInfo(TaskBasicInfo taskBasicInfo) {
-        this.taskBasicInfo = taskBasicInfo;
-    }
-
-    public String getInspectorId() {
-        return inspectorId;
-    }
-
-    public void setInspectorId(String inspectorId) {
-        this.inspectorId = inspectorId;
-    }
-
-    public String getInspectorName() {
-        return inspectorName;
-    }
-
-    public void setInspectorName(String inspectorName) {
-        this.inspectorName = inspectorName;
-    }
+  
 
     public String getManCompany() {
         return manCompany;
@@ -445,13 +356,7 @@ public class DetectionTask {
         this.finish = finish;
     }
 
-    public String getProductName() {
-        return productName;
-    }
-
-    public void setProductName(String productName) {
-        this.productName = productName;
-    }
+   
 
     public String getCpu() {
         return cpu;
@@ -469,15 +374,8 @@ public class DetectionTask {
                 ", lastDate=" + lastDate +
                 ", lastModifyDate=" + lastModifyDate +
                 ", state=" + state +
-                ", lib=" + lib +
-                ", nativeLib=" + nativeLib +
-                ", mainLib='" + mainLib + '\'' +
                 ", valid=" + valid +
                 ", finish=" + finish +
-                ", productName='" + productName + '\'' +
-                ", taskBasicInfo=" + taskBasicInfo +
-                ", inspectorId='" + inspectorId + '\'' +
-                ", inspectorName='" + inspectorName + '\'' +
                 ", manCompany='" + manCompany + '\'' +
                 ", caseLib='" + caseLib + '\'' +
                 '}';
