@@ -26,7 +26,7 @@ public class SessionInterceptor implements HandlerInterceptor {
         response.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept,Authorization,authorization");
         response.setHeader("Access-Control-Allow-Credentials","true");
 		String url = request.getRequestURL().toString();
-		
+		// 测试GIT仓库搭建成功，写一个注释而已
 		// 登录页面不用检测，不然再次使用跳转会出现Cannot forward after response has been
 		// committed错误（request多次提交）
 		if (url.contains("login") || url.contains("js") || url.contains("img") || url.contains("css")
