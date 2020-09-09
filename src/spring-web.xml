@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.2.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.2.xsd
+		http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.2.xsd">
+	
+	<!-- 开启自动扫描 -->
+	<mvc:annotation-driven></mvc:annotation-driven>
+	
+	<!-- 只扫描带有@controller的标签 -->
+ 	<context:component-scan base-package="cn.com" use-default-filters="false">
+ 		<context:include-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+ 	</context:component-scan>
+	
+	<!-- 启用阿里巴巴 json -->
+	<mvc:annotation-driven>
+		<mvc:message-converters>
+			<bean class="com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter">
+				<property name="supportedMediaTypes">
+                    <list>
+                        <value>application/json</value>
+                        <value>text/html;charset=UTF-8</value>
+                    </list>
+                </property>
+			</bean>
+		</mvc:message-converters>
+	</mvc:annotation-driven>
+	
+	
+	<!--配置JSP　显示ViewResolver-->
+    <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="viewClass" value="org.springframework.web.servlet.view.JstlView"/>
+        <property name="prefix" value="/"/>
+        <property name="suffix" value=".jsp"/>
+    </bean>
+	
+	<!-- MVC拦截器，拦截所有MVC -->
+	<mvc:interceptors>
+		<mvc:interceptor>
+			<mvc:mapping path="/**"/>
+			<bean class="cn.com.interceptor.SessionInterceptor"></bean>
+		</mvc:interceptor>
+	</mvc:interceptors>
+	
+
+    <!--上传解析器 -->
+    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+        <!-- 上传文件允许最大值  byte -->
+        <property name="defaultEncoding" value="UTF-8" />
+        <property name="maxInMemorySize" value="4096" />
+        <property name="maxUploadSize" value="104857600"/>
+    </bean>
+	
+
+</beans>

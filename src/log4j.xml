@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE log4j:configuration SYSTEM "https://logging.apache.org/log4j/1.2/apidocs/org/apache/log4j/xml/doc-files/log4j.dtd">
+<log4j:configuration>
+	<appender name="error" class="org.apache.log4j.RollingFileAppender">
+		<param name="file" value="/home/cmdFile/NSTestTool/logs/error.log" />
+		<param name="MaxFileSize" value="10MB" />
+		<param name="MaxBackupIndex" value="10" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="[%d{yyyy-MM-dd HH:mm:ss}][%t][%p]:%m%n" />
+		</layout>
+		 <filter class="org.apache.log4j.varia.LevelRangeFilter">    
+            <param name="levelMin" value="error" />    
+            <param name="levelMax" value="off" />    
+            <param name="AcceptOnMatch" value="true" /> 
+        </filter>    
+	</appender>
+	<appender name="access" class="org.apache.log4j.RollingFileAppender">
+		<param name="file" value="/home/cmdFile/NSTestTool/logs/access.log" />
+		<param name="MaxFileSize" value="10MB" />
+		<param name="MaxBackupIndex" value="10" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="[%d{yyyy-MM-dd HH:mm:ss}][%t][%p]:%m%n" />
+		</layout>
+		<filter class="org.apache.log4j.varia.LevelRangeFilter">    
+            <param name="levelMin" value="info" />    
+            <param name="levelMax" value="off" />    
+            <param name="AcceptOnMatch" value="true" /> 
+        </filter>  
+	</appender>
+	<appender name="root" class="org.apache.log4j.RollingFileAppender">
+		<param name="file" value="/home/cmdFile/NSTestTool/logs/nohup.log" />
+		<param name="MaxFileSize" value="10MB" />
+		<param name="MaxBackupIndex" value="10" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="[%d{yyyy-MM-dd HH:mm:ss}][%t][%p]:%m%n" />
+		</layout>
+	</appender>
+	<!--通过<logger></logger>的定义可以将各个包中的类日志输出到不同的日志文件中-->  
+	<logger name="nstesttoolweb" additivity="false">
+	    <level value="info"/> 
+	    <appender-ref ref="access" />
+	    <appender-ref ref="error" />
+	</logger>
+	<root>
+		<priority value="info" />
+		<appender-ref ref="root" />
+	</root>
+</log4j:configuration>
