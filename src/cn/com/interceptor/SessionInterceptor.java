@@ -25,6 +25,14 @@ public class SessionInterceptor implements HandlerInterceptor {
         response.setHeader("Access-Control-Max-Age", "36000");
         response.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept,Authorization,authorization");
         response.setHeader("Access-Control-Allow-Credentials","true");
+		String method = request.getMethod();
+		if (method.equals("OPTIONS")) {
+			System.out.println("options请求");
+			response.setStatus(HttpServletResponse.SC_OK);
+			return true;
+		} 
+		
+		
 		String url = request.getRequestURL().toString();
 		// 测试GIT仓库搭建成功，写一个注释而已
 		// 登录页面不用检测，不然再次使用跳转会出现Cannot forward after response has been
@@ -35,11 +43,13 @@ public class SessionInterceptor implements HandlerInterceptor {
 		}
 		HttpSession session = request.getSession();
 		User user = (User) session.getAttribute(Const.LOGINNAME);
+		System.out.println("url=" + url);
 		if (user != null) {
 			UserSession.set(Const.LOGINNAME, user.getName());
 			UserSession.set("uuid", user.getId());
 			return true;
 		} else {
+			System.out.println("请求被拦截， 用户未登录！");
 			/*
 			 * 自定义返回
 			response.setHeader("Content-Type", "application/json;charset=UTF-8");
@@ -48,7 +58,7 @@ public class SessionInterceptor implements HandlerInterceptor {
 			ServiceResp result =  ServiceResp.createByCodeErrorMessage(403, "没有访问权限");
 			response.getWriter().write(JSON.toJSONString(result));
 			*/
-			response.setStatus(403);
+			response.setStatus(HttpServletResponse.SC_FORBIDDEN);
 			return false;
 		}
 		
