@@ -80,6 +80,7 @@ public class LoginController {
 	 * @date 2019/9/6 15:53
 	 */
 	@RequestMapping("/minor_logout")
+	@ResponseBody
 	public ServiceResp logout(HttpServletRequest request) {
 		HttpSession session = request.getSession();
 		session.removeAttribute(Const.LOGINNAME);

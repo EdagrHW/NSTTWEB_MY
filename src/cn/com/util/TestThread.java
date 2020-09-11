@@ -11,12 +11,20 @@ public class TestThread extends Thread {
 	public void run() {
 		ConfigManager.getDetectionMap().get(this.taskNum).setState(DetectionTask.STATE_RUNNING);
 		
-		for(long i = 0; i < 100000000000L; i++ ) {
+		
+		for(int i = 0; i < 60; i++ ) {
 			if(Thread.currentThread().isInterrupted()) {
 				ConfigManager.getDetectionMap().get(this.taskNum).setState(DetectionTask.STATE_READY);
 				break;
 			}
-			long a = i;
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				break;
+			}
+			int a = i;
 			a++;
 			System.out.println(i);
 		}
